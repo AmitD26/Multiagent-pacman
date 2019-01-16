@@ -1,0 +1,86 @@
+    def getAction(self, gameState):
+        """
+          Returns the minimax action using self.depth and self.evaluationFunction
+        """
+        "*** YOUR CODE HERE ***"
+        
+        action = self.max_player(gameState, gameState.getNumAgents(), self.depth)
+        legal_actions = gameState.getLegalActions()
+        print "Number of nodes expanded: " + str(number_of_nodes)
+        return legal_actions[legal_actions.index(action[1])]
+
+
+    def min_player(self,state, agentIndex, num_agents, depth, alpha, beta):
+        min_score = 999999
+        V = 999999
+        if(agentIndex >= num_agents):
+            if(depth == 1):
+                return self.evaluationFunction(state)
+            else:
+            	if alpha > beta:
+            		return V
+                return self.max_player(state, num_agents, depth - 1, alpha, beta)
+        else:
+            legal_actions = state.getLegalActions(agentIndex)
+
+            for action in legal_actions:
+				if alpha > beta:
+					return V
+				successorGameState = state.generateSuccessor(agentIndex, action)
+				global number_of_nodes
+				number_of_nodes += 1
+				if(successorGameState.isLose() or successorGameState.isWin()):
+				    successor_score = self.evaluationFunction(successorGameState)
+				    if successor_score < V:
+				   		V = successor_score
+				    if V < alpha:
+				    	return V
+				    beta = min(beta, V)
+				else:
+				    successor_score = self.min_player(successorGameState, agentIndex + 1, num_agents, depth)
+				    if successor_score < V:
+				   		V = successor_score
+				   	if V < alpha:
+						return V
+					beta = min(beta, V)
+        return V
+
+
+    def max_player(self, state, num_agents, depth):
+        pacman_choice = None
+        max_score = -999999
+        V = -999999
+        legal_actions = state.getLegalActions(0)
+
+        for action in legal_actions:
+        	if alpha > beta:
+        		break
+            successorGameState = state.generateSuccessor(0, action)
+            global number_of_nodes
+            number_of_nodes += 1
+
+            if(successorGameState.isLose() or successorGameState.isWin()):
+                successor_score = self.evaluationFunction(successorGameState)
+                if successor_score > V:
+                    V = successor_score
+                    pacman_choice = action
+                if V > beta:
+                    return V
+                alpha = max(alpha, V)
+                #if successor_score > max_score:
+                #    max_score = successor_score
+                #    pacman_choice = action
+            else:
+		        successor_score = self.min_player(successorGameState, 1, num_agents, depth)
+		        if successor_score > V:
+		            V = successor_score
+		            pacman_choice = action
+            	if V > beta:
+                	return V
+            	alpha = max(alpha, V)
+        if(depth == self.depth):
+            return max_score,pacman_choice
+        else:
+            return max_score
+            
+        util.raiseNotDefined()
