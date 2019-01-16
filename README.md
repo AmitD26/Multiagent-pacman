@@ -11,4 +11,4 @@ Implemented the following:
 3. Alpha-Beta Pruning
 4. Expectimax
 
-Please use python2.7.
+Please use Python 2.7.
